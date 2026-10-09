@@ -193,21 +193,35 @@ t = re.sub(r'<a[^>]*wx_topic_link[^>]*>(.*?)</a>', r'\1', t, flags=re.S)
 
 ---
 
-## 5. 目录约定
+## 5. 脚本与目录约定
 
+四个脚本（`skill/scripts/`，**全部不需要登录**）：
+
+| 脚本 | 作用 |
+|---|---|
+| `wx_fetch.py` | 抓单篇正文（**核心**，chksm 解锁逻辑在这里） |
+| `wx_archive.py` | 批量抓取并归档为 Markdown |
+| `fetch_images.py` | 下载图集类文章的图（`cdn_url`） |
+| `unify_archive.py` | 归档标准化 + 生成通读合集（纯标准库） |
+
+```bash
+python wx_fetch.py <sn清单.json>
+python wx_archive.py <sn清单.json> out
+python fetch_images.py <sn清单.json> out/images
+python unify_archive.py <工作目录> <号名>
+```
+
+输入 `sn清单.json` 是一个数组，每项一篇：`{title, biz, mid, idx, sn}`。
+- `biz` 从该号**任意一篇**文章 URL 拿（`__biz=` 后那串），同号所有文章通用
+- `sn` ★ **必须从客户端点开文章时抓包拿**（服务端强校验，不可盲扫）
+
+目录：
 ```
 <工作目录>/
-  wx_fetch.py          正文抓取（三模板 + 自清代理 + 转义解序）
-  wx_archive.py        归档到 out/articles/
-  _fetch_images.py     图集 cdn_url 下载
-  _unify_archive.py    归档标准化 + 合集生成（★ 换目录即可复用）
-  _gen_report.py       报告生成
-  _list_merged.json    ★ 权威清单（列表收割产物）
-  out/articles/        原始归档
-  out/articles_clean/  标准化单篇
-  out/images/          配图
-  out/<号名>-全文合集.md     可通读合集
-  out/<号名>-内容研究报告.html  研究报告
+  out/articles/          wx_archive.py 产物（原始归档）
+  out/images/            fetch_images.py 产物（配图）
+  out/articles_clean/    unify_archive.py 产物（标准化单篇）
+  out/<号名>-全文合集.md   unify_archive.py 产物（通读合集）
 ```
 
 ---

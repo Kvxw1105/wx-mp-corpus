@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 脚本运行产物（抓取结果不进仓库）
+out/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -64,14 +64,36 @@ wx-mp-corpus 走的是另一条路：**把这件事拆成"要登录的"和"不�
 
 把 [`skill/`](skill/) 拷进你的 Agent skill 目录（如 `~/.agents/skills/wx-mp-corpus/`）。
 
-前置条件：能跑 Python；列表收割环节需要一个已登录的微信 PC 客户端 + GUI 自动化能力。
+前置条件：Python 3 + `requests`；列表收割环节需要一个已登录的微信 PC 客户端 + GUI 自动化能力。
 
 适用于 Claude Code、Codex、ZCode 或任何支持 skill 的 Agent。
 
-归档标准化脚本可独立使用：
+## 脚本
+
+四个脚本**全部不需要登录**，可独立使用（输入格式与详细说明见 [`skill/scripts/`](skill/scripts/)）：
+
+| 脚本 | 作用 |
+|---|---|
+| `wx_fetch.py` | 抓单篇正文（**核心**，chksm 解锁逻辑在这里） |
+| `wx_archive.py` | 批量抓取并归档为 Markdown |
+| `fetch_images.py` | 下载图集类文章的图（`cdn_url`） |
+| `unify_archive.py` | 归档标准化 + 生成通读合集（纯标准库） |
 
 ```bash
-python skill/scripts/unify_archive.py <工作目录> [号名]
+pip install requests
+
+python skill/scripts/wx_fetch.py    sn清单.json             # 抓取（打印每篇字数/图数）
+python skill/scripts/wx_archive.py  sn清单.json out         # 归档为 Markdown
+python skill/scripts/fetch_images.py sn清单.json out/images # 下图集
+python skill/scripts/unify_archive.py <工作目录> <号名>      # 标准化 + 合集
+```
+
+也可作为模块用：
+
+```python
+from wx_fetch import fetch
+art, raw = fetch(biz, mid, idx, sn)
+print(art.title, art.publish_date, len(art.text), "字")
 ```
 
 ## 平台技巧精选（完整版见 SKILL.md 第 0-2 节）
